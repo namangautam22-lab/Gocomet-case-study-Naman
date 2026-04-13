@@ -1,6 +1,6 @@
 'use client';
 
-import { X, SlidersHorizontal, ChevronDown } from 'lucide-react';
+import { X, SlidersHorizontal, ChevronDown, Plus } from 'lucide-react';
 import { useAppStore } from '@/store/appStore';
 import type { Mode, Risk } from '@/types';
 
@@ -54,7 +54,7 @@ function FilterChip({ label, options, active, onSelect }: FilterChipProps) {
 }
 
 export function FiltersBar() {
-  const { activeFilters, setFilter, clearFilters, getFilteredJourneys } = useAppStore();
+  const { activeFilters, setFilter, clearFilters, getFilteredJourneys, setShowSaveViewModal } = useAppStore();
 
   const hasActive = Object.entries(activeFilters).some(
     ([k, v]) => k !== 'search' && v !== null && v !== false && v !== ''
@@ -135,6 +135,15 @@ export function FiltersBar() {
         {activeFilters.hasRemarks && (
           <X size={9} onClick={(e) => { e.stopPropagation(); setFilter('hasRemarks', false); }} />
         )}
+      </button>
+
+      {/* Custom filter */}
+      <button
+        onClick={() => setShowSaveViewModal(true)}
+        className="flex items-center gap-1 text-[11px] font-medium px-2.5 py-1 rounded-full border border-dashed border-slate-300 text-slate-500 hover:border-blue-400 hover:text-blue-600 transition-colors"
+      >
+        <Plus size={9} />
+        Custom filter
       </button>
 
       {hasActive && (

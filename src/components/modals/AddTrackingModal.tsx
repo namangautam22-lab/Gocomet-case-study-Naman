@@ -102,7 +102,7 @@ function buildJourney(
 export function AddTrackingModal() {
   const { setShowAddTrackingModal, addJourney, selectJourney, journeys } = useAppStore();
 
-  const [trackingRef, setTrackingRef] = useState('');
+  const [trackingRef, setTrackingRef] = useState('MAEU-24881009');
   const [carrier, setCarrier] = useState('Maersk Line');
   const [mode, setMode] = useState<Mode>('ocean');
   const [reference, setReference] = useState('');

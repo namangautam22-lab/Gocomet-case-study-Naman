@@ -10,6 +10,7 @@ import { AddRemarkDrawer } from '@/components/drawers/AddRemarkDrawer';
 import { AddMilestoneDrawer } from '@/components/drawers/AddMilestoneDrawer';
 import { DesignRationale } from '@/components/DesignRationale';
 import { WhatsNew } from '@/components/onboarding/WhatsNew';
+import { SimpleTour } from '@/components/onboarding/SimpleTour';
 
 export default function Home() {
   const {
@@ -37,6 +38,7 @@ export default function Home() {
 
       {/* Onboarding — always mounted, shows on first visit */}
       <WhatsNew />
+      <SimpleTour />
     </div>
   );
 }

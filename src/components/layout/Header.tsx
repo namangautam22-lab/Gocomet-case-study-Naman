@@ -1,14 +1,14 @@
 'use client';
 
 import { useState } from 'react';
-import { Search, Bell, Map, ChevronDown, HelpCircle, StickyNote } from 'lucide-react';
+import { Search, Map, ChevronDown, HelpCircle, StickyNote } from 'lucide-react';
 import { useAppStore } from '@/store/appStore';
 import { Avatar } from '@/components/ui/Badge';
 
 export function Header() {
   const {
     setFilter, activeFilters,
-    setShowWhatsNew, setShowDesignRationale,
+    setShowWhatsNew, setShowDesignRationale, setShowTour,
     currentView, goToControlTower,
   } = useAppStore();
   const [searchFocused, setSearchFocused] = useState(false);
@@ -64,6 +64,13 @@ export function Header() {
       {/* Right actions */}
       <div className="flex items-center gap-1 flex-shrink-0 ml-auto">
         <button
+          onClick={() => setShowTour(true)}
+          title="Feature tour"
+          className="hidden sm:flex items-center gap-1 text-[11px] font-medium text-slate-500 px-2.5 py-1 rounded-full border border-slate-200 hover:border-blue-300 hover:text-blue-600 transition-colors"
+        >
+          Tour
+        </button>
+        <button
           onClick={() => setShowWhatsNew(true)}
           title="What's New"
           className="p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-md transition-colors"
@@ -77,11 +84,6 @@ export function Header() {
         >
           <StickyNote size={15} />
         </button>
-        <button className="relative p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-md transition-colors">
-          <Bell size={15} />
-          <span className="absolute top-1 right-1 w-1.5 h-1.5 bg-red-500 rounded-full" />
-        </button>
-
         {/* User */}
         <button className="flex items-center gap-1.5 hover:bg-slate-50 rounded-md px-2 py-1 ml-1 transition-colors">
           <Avatar name="Priya Sharma" size="xs" />

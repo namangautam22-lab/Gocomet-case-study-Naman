@@ -104,7 +104,13 @@ export function WhatsNew() {
         </div>
 
         {/* Footer */}
-        <div className="border-t border-slate-100 px-6 py-4 flex items-center justify-end">
+        <div className="border-t border-slate-100 px-6 py-4 flex items-center justify-between">
+          <button
+            onClick={() => { handleDismiss(); setShowWhatsNew(false); useAppStore.getState().setShowTour(true); }}
+            className="text-xs text-blue-600 hover:text-blue-700 font-medium underline underline-offset-2 transition-colors"
+          >
+            Take a quick tour →
+          </button>
           <Button variant="primary" size="sm" onClick={handleDismiss}>
             Start using GoTrack
           </Button>

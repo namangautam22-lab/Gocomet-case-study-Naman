@@ -13,30 +13,26 @@ interface FilterChipProps {
 
 function FilterChip({ label, options, active, onSelect }: FilterChipProps) {
   const activeOption = options.find((o) => o.value === active);
-  const isActive = active !== null;
 
   return (
     <div className="relative group">
       <button
-        className={`flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-full border transition-colors ${
-          isActive
+        className={`flex items-center gap-1 text-[11px] font-medium px-2.5 py-1 rounded-full border transition-colors ${
+          active !== null
             ? 'bg-blue-600 text-white border-blue-600'
             : 'bg-white text-slate-600 border-slate-200 hover:border-blue-300 hover:text-blue-600'
         }`}
       >
-        {isActive ? activeOption?.label ?? label : label}
-        {isActive ? (
+        {active !== null ? (activeOption?.label ?? label) : label}
+        {active !== null ? (
           <span
-            onClick={(e) => {
-              e.stopPropagation();
-              onSelect(null);
-            }}
+            onClick={(e) => { e.stopPropagation(); onSelect(null); }}
             className="ml-0.5 cursor-pointer hover:opacity-70"
           >
-            <X size={10} />
+            <X size={9} />
           </span>
         ) : (
-          <ChevronDown size={10} />
+          <ChevronDown size={9} />
         )}
       </button>
       {/* Dropdown */}
@@ -46,9 +42,7 @@ function FilterChip({ label, options, active, onSelect }: FilterChipProps) {
             key={String(o.value)}
             onClick={() => onSelect(o.value)}
             className={`w-full text-left px-3 py-1.5 text-xs transition-colors ${
-              o.value === active
-                ? 'text-blue-600 font-medium bg-blue-50'
-                : 'text-slate-700 hover:bg-slate-50'
+              o.value === active ? 'text-blue-600 font-medium bg-blue-50' : 'text-slate-700 hover:bg-slate-50'
             }`}
           >
             {o.label}
@@ -62,16 +56,15 @@ function FilterChip({ label, options, active, onSelect }: FilterChipProps) {
 export function FiltersBar() {
   const { activeFilters, setFilter, clearFilters, getFilteredJourneys } = useAppStore();
 
-  const hasActiveFilters =
-    Object.entries(activeFilters).some(([k, v]) => k !== 'search' && v !== null && v !== false && v !== '');
-
-  const filtered = getFilteredJourneys();
+  const hasActive = Object.entries(activeFilters).some(
+    ([k, v]) => k !== 'search' && v !== null && v !== false && v !== ''
+  );
 
   return (
-    <div className="flex items-center gap-2 flex-wrap" data-tour="filters">
-      <div className="flex items-center gap-1 text-xs text-slate-400 flex-shrink-0">
-        <SlidersHorizontal size={12} />
-        <span className="font-medium">Filter:</span>
+    <div className="flex items-center gap-1.5 flex-wrap" data-tour="filters">
+      <div className="flex items-center gap-1 text-[10px] text-slate-400 flex-shrink-0">
+        <SlidersHorizontal size={11} />
+        <span className="font-semibold">Filter:</span>
       </div>
 
       <FilterChip
@@ -92,7 +85,7 @@ export function FiltersBar() {
         active={activeFilters.risk}
         onSelect={(v) => setFilter('risk', v as Risk | null)}
         options={[
-          { label: 'All Risk Levels', value: null },
+          { label: 'All Risk', value: null },
           { label: 'Low', value: 'low' },
           { label: 'Medium', value: 'medium' },
           { label: 'High', value: 'high' },
@@ -111,7 +104,6 @@ export function FiltersBar() {
           { label: 'Sofia Martinez', value: 'Sofia Martinez' },
           { label: 'Hans Mueller', value: 'Hans Mueller' },
           { label: 'Elena Fischer', value: 'Elena Fischer' },
-          { label: 'Fatima Al-Rashid', value: 'Fatima Al-Rashid' },
           { label: 'Ramesh Iyer', value: 'Ramesh Iyer' },
           { label: 'Kavya Reddy', value: 'Kavya Reddy' },
         ]}
@@ -122,7 +114,7 @@ export function FiltersBar() {
         active={activeFilters.delayThreshold !== null ? String(activeFilters.delayThreshold) : null}
         onSelect={(v) => setFilter('delayThreshold', v !== null ? Number(v) : null)}
         options={[
-          { label: 'Any Delay', value: null },
+          { label: 'Any', value: null },
           { label: '≥ 1 day', value: '1' },
           { label: '≥ 3 days', value: '3' },
           { label: '≥ 5 days', value: '5' },
@@ -130,46 +122,32 @@ export function FiltersBar() {
         ]}
       />
 
-      <FilterChip
-        label="Destination"
-        active={activeFilters.destination}
-        onSelect={(v) => setFilter('destination', v)}
-        options={[
-          { label: 'All Destinations', value: null },
-          { label: 'Germany (DE)', value: 'DE' },
-          { label: 'United States (US)', value: 'US' },
-          { label: 'United Kingdom (UK)', value: 'UK' },
-          { label: 'Netherlands (NL)', value: 'NL' },
-          { label: 'India (IN)', value: 'IN' },
-        ]}
-      />
-
-      {/* Has Remarks toggle */}
+      {/* Has Remarks */}
       <button
         onClick={() => setFilter('hasRemarks', !activeFilters.hasRemarks)}
-        className={`flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-full border transition-colors ${
+        className={`flex items-center gap-1 text-[11px] font-medium px-2.5 py-1 rounded-full border transition-colors ${
           activeFilters.hasRemarks
             ? 'bg-blue-600 text-white border-blue-600'
             : 'bg-white text-slate-600 border-slate-200 hover:border-blue-300 hover:text-blue-600'
         }`}
       >
         Has Remarks
-        {activeFilters.hasRemarks && <X size={10} onClick={(e) => { e.stopPropagation(); setFilter('hasRemarks', false); }} />}
+        {activeFilters.hasRemarks && (
+          <X size={9} onClick={(e) => { e.stopPropagation(); setFilter('hasRemarks', false); }} />
+        )}
       </button>
 
-      {/* Clear all */}
-      {hasActiveFilters && (
+      {hasActive && (
         <button
           onClick={clearFilters}
-          className="text-xs text-slate-400 hover:text-slate-600 underline underline-offset-2 transition-colors"
+          className="text-[11px] text-slate-400 hover:text-slate-600 underline underline-offset-2 transition-colors"
         >
-          Clear all
+          Clear
         </button>
       )}
 
-      {/* Results count */}
-      <span className="ml-auto text-xs text-slate-400 flex-shrink-0">
-        {filtered.length} journey{filtered.length !== 1 ? 's' : ''}
+      <span className="ml-auto text-[10px] text-slate-400 flex-shrink-0">
+        {getFilteredJourneys().length} result{getFilteredJourneys().length !== 1 ? 's' : ''}
       </span>
     </div>
   );

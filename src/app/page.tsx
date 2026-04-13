@@ -5,10 +5,11 @@ import { ControlTower } from '@/components/control-tower/ControlTower';
 import { JourneyDetail } from '@/components/journey-detail/JourneyDetail';
 import { SaveViewModal } from '@/components/modals/SaveViewModal';
 import { MergeLinkModal } from '@/components/modals/MergeLinkModal';
+import { AddTrackingModal } from '@/components/modals/AddTrackingModal';
 import { AddRemarkDrawer } from '@/components/drawers/AddRemarkDrawer';
 import { AddMilestoneDrawer } from '@/components/drawers/AddMilestoneDrawer';
-import { GuidedTour } from '@/components/tour/GuidedTour';
 import { DesignRationale } from '@/components/DesignRationale';
+import { WhatsNew } from '@/components/onboarding/WhatsNew';
 
 export default function Home() {
   const {
@@ -18,7 +19,7 @@ export default function Home() {
     showAddRemarkDrawer,
     showAddMilestoneDrawer,
     showDesignRationale,
-    showTour,
+    showAddTrackingModal,
   } = useAppStore();
 
   return (
@@ -26,13 +27,16 @@ export default function Home() {
       {currentView === 'control-tower' && <ControlTower />}
       {currentView === 'journey-detail' && <JourneyDetail />}
 
-      {/* Global overlays */}
+      {/* Global overlays — order matters for z-index */}
       {showSaveViewModal && <SaveViewModal />}
       {showMergeLinkModal && <MergeLinkModal />}
+      {showAddTrackingModal && <AddTrackingModal />}
       {showAddRemarkDrawer && <AddRemarkDrawer />}
       {showAddMilestoneDrawer && <AddMilestoneDrawer />}
       {showDesignRationale && <DesignRationale />}
-      {showTour && <GuidedTour />}
+
+      {/* Onboarding — always mounted, shows on first visit */}
+      <WhatsNew />
     </div>
   );
 }

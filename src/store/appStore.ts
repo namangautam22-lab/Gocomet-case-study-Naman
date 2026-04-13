@@ -37,7 +37,8 @@ interface AppState {
   showDesignRationale: boolean;
   showTour: boolean;
   tourStep: number;
-  tourAutoOpen: boolean;
+  showAddTrackingModal: boolean;
+  showWhatsNew: boolean;
 
   // Computed helpers
   getSelectedJourney: () => Journey | null;
@@ -50,6 +51,7 @@ interface AppState {
   // Data mutations
   addRemark: (journeyId: string, remark: Omit<Remark, 'id' | 'createdAt' | 'journeyId'>) => void;
   addMilestone: (journeyId: string, milestone: Omit<Milestone, 'id' | 'createdAt' | 'journeyId'>) => void;
+  addJourney: (journey: Journey) => void;
   saveView: (view: Omit<SavedView, 'id' | 'createdAt'>) => void;
   mergeJourneyLegs: (journeyId: string, candidateIds: string[]) => void;
 
@@ -66,6 +68,8 @@ interface AppState {
   setShowDesignRationale: (v: boolean) => void;
   setShowTour: (v: boolean) => void;
   setTourStep: (step: number) => void;
+  setShowAddTrackingModal: (v: boolean) => void;
+  setShowWhatsNew: (v: boolean) => void;
 }
 
 const DEFAULT_FILTERS: ActiveFilters = {
@@ -98,7 +102,8 @@ export const useAppStore = create<AppState>()((set, get) => ({
   showDesignRationale: false,
   showTour: false,
   tourStep: 0,
-  tourAutoOpen: false,
+  showAddTrackingModal: false,
+  showWhatsNew: false,
 
   // ── Computed ──────────────────────────────────────────────────────────────
   getSelectedJourney: () => {
@@ -209,16 +214,35 @@ export const useAppStore = create<AppState>()((set, get) => ({
     }));
   },
 
+  addJourney: (journey) => {
+    const wc: WhatChangedItem = {
+      id: `wc-${Date.now()}`,
+      journeyId: journey.id,
+      journeyRef: journey.shipmentRef,
+      type: 'status',
+      description: `Journey ${journey.id} added via tracking`,
+      by: journey.owner,
+      at: new Date().toISOString(),
+    };
+    set((state) => ({
+      journeys: [...state.journeys, journey],
+      whatChanged: [wc, ...state.whatChanged],
+    }));
+  },
+
   saveView: (viewData) => {
     const newView: SavedView = {
       id: `view-${Date.now()}`,
       createdAt: new Date().toISOString(),
       ...viewData,
     };
-    set((state) => ({
-      savedViews: [...state.savedViews, newView],
-      showSaveViewModal: false,
-    }));
+    set((state) => {
+      const newViews = [...state.savedViews, newView];
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('gt_views', JSON.stringify({ views: newViews, activeId: state.activeViewId }));
+      }
+      return { savedViews: newViews, showSaveViewModal: false };
+    });
   },
 
   mergeJourneyLegs: (journeyId, _candidateIds) => {
@@ -246,7 +270,11 @@ export const useAppStore = create<AppState>()((set, get) => ({
   clearFilters: () => set({ activeFilters: DEFAULT_FILTERS, activeViewId: null }),
 
   setActiveView: (viewId) => {
-    const view = viewId ? get().savedViews.find((v) => v.id === viewId) : null;
+    const { savedViews } = get();
+    const view = viewId ? savedViews.find((v) => v.id === viewId) : null;
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('gt_views', JSON.stringify({ views: savedViews, activeId: viewId }));
+    }
     set({
       activeViewId: viewId,
       activeFilters: view ? { ...DEFAULT_FILTERS, ...(view.filters as Partial<ActiveFilters>) } : DEFAULT_FILTERS,
@@ -261,4 +289,6 @@ export const useAppStore = create<AppState>()((set, get) => ({
   setShowDesignRationale: (v) => set({ showDesignRationale: v }),
   setShowTour: (v) => set({ showTour: v, tourStep: 0 }),
   setTourStep: (step) => set({ tourStep: step }),
+  setShowAddTrackingModal: (v) => set({ showAddTrackingModal: v }),
+  setShowWhatsNew: (v) => set({ showWhatsNew: v }),
 }));
